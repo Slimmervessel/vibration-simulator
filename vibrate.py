@@ -7,7 +7,13 @@ Works on Windows, macOS, and Linux
 import time
 import sys
 import argparse
+import os
 from enum import Enum
+
+# Fix encoding issues on Windows
+if sys.platform == 'win32':
+    sys.stdout.reconfigure(encoding='utf-8')
+    os.system('chcp 65001 >nul 2>&1')
 
 class VibrationIntensity(Enum):
     LIGHT = ("light", 0.1, "~", "░")
@@ -202,18 +208,29 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     
+    - name: List files (debug)
+      run: |
+        echo "Current directory contents:"
+        ls -la
+      shell: bash
+    
     - name: Test Light Vibration
       run: python vibrate.py --intensity light
+      shell: bash
     
     - name: Test Medium Vibration
       run: python vibrate.py --intensity medium --count 2
+      shell: bash
     
     - name: Test Heavy Vibration
       run: python vibrate.py --intensity heavy
+      shell: bash
     
     - name: Test Pattern
       run: python vibrate.py --pattern light,medium,heavy,medium,light
+      shell: bash
     
     - name: Show Help
       run: python vibrate.py --help
+      shell: bash
 """
